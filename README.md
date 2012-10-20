@@ -4,6 +4,14 @@ Watches HAML files, compiles them to HTML on change.
 
 [![Build Status](https://secure.travis-ci.org/manufaktor/guard-haml.png?branch=development)](http://travis-ci.org/manufaktor/guard-haml)
 
+## My Extention
+* Options
+  1. :output => 'public'                   set output directory for compiled files
+  2. :input => 'src'                       set input directory with haml files
+  3. :run_at_start => true                 compile files when guard starts
+  4. :notifications => true                send notifictions to Growl/libnotify/Notifu
+  5. :haml_options => { :ugly => true }    pass options to the Haml engine
+  6. :output_extension => "html/php"
 
 ## Install
 

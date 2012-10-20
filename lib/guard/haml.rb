@@ -9,7 +9,8 @@ module Guard
 
     def initialize(watchers = [], options = {})
       @options = {
-        :notifications => true
+        :notifications => true,
+        :output_extension => "html"
       }.merge options
       super(watchers, @options)
     end
@@ -35,7 +36,7 @@ module Guard
         output_file = get_output(file)
         FileUtils.mkdir_p File.dirname(output_file)
         File.open(output_file, 'w') { |f| f.write(compile_haml(file)) }
-        message = "Successfully compiled haml to html!\n"
+        message = "Successfully compiled haml to #{@options[:output_extension]}!\n"
         message += "# #{file} -> #{output_file}".gsub("#{Bundler.root.to_s}/", '')
         ::Guard::UI.info message
         Notifier.notify( true, message ) if @options[:notifications]
@@ -68,7 +69,7 @@ module Guard
       file_dir = File.dirname(file)
       file_name = File.basename(file).split('.')[0..-2].join('.')
 
-      file_name = "#{file_name}.html" if file_name.match("\.html?").nil?
+      file_name = "#{file_name}.#{@options[:output_extension]}" if file_name.match("\.html?").nil?
 
       file_dir = file_dir.gsub(Regexp.new("#{@options[:input]}(\/){0,1}"), '') if @options[:input]
       file_dir = File.join(@options[:output], file_dir) if @options[:output]
