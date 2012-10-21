@@ -35,7 +35,9 @@ module Guard
       paths.each do |file|
         output_file = get_output(file)
         FileUtils.mkdir_p File.dirname(output_file)
-        File.open(output_file, 'w') { |f| f.write(compile_haml(file)) }
+        new_content = compile_haml(file)
+        new_content = change_php_marker(new_content) if @options[:output_extension] == "php"
+        File.open(output_file, 'w') { |f| f.write(new_content) }
         message = "Successfully compiled haml to #{@options[:output_extension]}!\n"
         message += "# #{file} -> #{output_file}".gsub("#{Bundler.root.to_s}/", '')
         ::Guard::UI.info message
@@ -46,9 +48,18 @@ module Guard
 
     private
 
+    def replace_php_marker(content)
+      content.gsub("<?", "_?").gsub("?>", "?_")
+    end
+
+    def change_php_marker(content)
+      content.gsub("_?", "<?").gsub("?_", "?>")
+    end
+
     def compile_haml file
       begin
         content = File.new(file).read
+        content = replace_php_marker(content) if @options[:output_extension] == "php"
         engine  = ::Haml::Engine.new(content, (@options[:haml_options] || {}))
         engine.render
       rescue StandardError => error
