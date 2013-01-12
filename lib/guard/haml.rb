@@ -49,11 +49,11 @@ module Guard
     private
 
     def replace_php_marker(content)
-      content.gsub("<?", "_?").gsub("?>", "?_")
+      content.gsub("<?", "_?").gsub("?>", "?_").gsub("->", "-_").gsub(" <", " !@#").gsub(" >", " $%^")
     end
 
     def change_php_marker(content)
-      content.gsub("_?", "<?").gsub("?_", "?>")
+      content.gsub("_?", "<?").gsub("?_", "?>").gsub("-_", "->").gsub(" !@#", " <").gsub(" $%^", " >")
     end
 
     def compile_haml file
@@ -63,7 +63,7 @@ module Guard
         engine  = ::Haml::Engine.new(content, (@options[:haml_options] || {}))
         engine.render
       rescue StandardError => error
-        message = "HAML compilation failed!\nError: #{error.message}"
+        message = "HAML compilation failed: File #{file}: !\nError: #{error.message}"
         ::Guard::UI.error message
         Notifier.notify( false, message ) if @options[:notifications]
         throw :task_has_failed
